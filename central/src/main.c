@@ -312,7 +312,7 @@ void main(void)
 		return;
 	}
 
-	LOG_INF("Bluetooth initialized");
+	LOG_INF("Bluetooth initialized as Central");
 
 	err = scan_start();
 

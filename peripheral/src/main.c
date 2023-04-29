@@ -141,6 +141,8 @@ void main(void)
 
 	bt_conn_auth_cb_register(&auth_cb_display);
 
+	LOG_INF("Bluetooth initialized as Peripheral");
+
 	/* Implement indicate. At the moment there is no suitable way
 	 * of starting delayed work so we do it here
 	 */
