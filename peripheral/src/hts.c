@@ -42,6 +42,8 @@ static uint8_t simulate_htm;
 static uint8_t indicating;
 static struct bt_gatt_indicate_params ind_params;
 
+int8_t get_rssi(void);
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
@@ -57,7 +59,9 @@ static void htmc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 static void indicate_cb(struct bt_conn *conn,
 			struct bt_gatt_indicate_params *params, uint8_t err)
 {
+#if 0
 	LOG_INF("Indication %s", err != 0U ? "fail" : "success");
+#endif
 }
 
 /*---------------------------------------------------------------------------*/
@@ -65,7 +69,9 @@ static void indicate_cb(struct bt_conn *conn,
 /*---------------------------------------------------------------------------*/
 static void indicate_destroy(struct bt_gatt_indicate_params *params)
 {
+#if 0
 	LOG_INF("Indication complete");
+#endif	
 	indicating = 0U;
 }
 
@@ -137,7 +143,7 @@ void hts_indicate(void)
 		temperature = sensor_value_to_double(&temp_value);
 
 gatt_indicate:
-		LOG_INF("temperature is %gC", temperature);
+		LOG_INF("temperature is %gC -- RSSI %ddB", temperature, get_rssi());
 
 		mantissa = (uint32_t)(temperature * 100);
 		exponent = (uint8_t)-2;

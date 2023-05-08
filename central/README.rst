@@ -8,6 +8,9 @@ Long Range version of Central HT.
 Requirements
 ************
 
+Requires Zephyr V3.3.99  
+
+
 Debug Output
 **********
 ```
