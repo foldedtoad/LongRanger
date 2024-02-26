@@ -279,14 +279,14 @@ static void bas_notify(void)
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
-void main(void)
+int main(void)
 {
 	int err;
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed: %d", err);
-		return;
+		return err;
 	}
 
 #if 0
@@ -296,7 +296,7 @@ void main(void)
 	err = create_advertising_coded();
 	if (err) {
 		LOG_ERR("Advertising failed to create: %d", err);
-		return;
+		return err;
 	}
 
 #if 0
@@ -320,4 +320,5 @@ void main(void)
 		/* Battery level simulation */
 		bas_notify();
 	}
+	return 0;
 }

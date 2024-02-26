@@ -258,7 +258,7 @@ static bool eir_found(struct bt_data *data, void *user_data)
 		}
 
 		for (i = 0; i < data->data_len; i += sizeof(uint16_t)) {
-			struct bt_uuid *uuid;
+			const struct bt_uuid *uuid;
 			uint16_t u16;
 			int err;
 
@@ -440,14 +440,14 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
-void main(void)
+int main(void)
 {
 	int err;
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed: %d", err);
-		return;
+		return err;
 	}
 
 	LOG_INF("Bluetooth initialized as Central scanning for \"%s\"",
@@ -457,7 +457,7 @@ void main(void)
 	err = scan_start();
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);
-		return;
+		return err;
 	}
 #else
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
@@ -468,4 +468,6 @@ void main(void)
 #endif
 
 	LOG_INF("Scanning successfully started");
+
+	return 0;
 }
