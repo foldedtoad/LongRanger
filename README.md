@@ -1,4 +1,4 @@
-# LongRanger - Zephyr +_ Bluetooth Coded-PHY 
+# LongRanger - Zephyr + Bluetooth LE Coded-PHY 
 
 ## Overview
 This poject's goal is to provide matching Bluetooth Code_PHY (Long Range) apps.  
