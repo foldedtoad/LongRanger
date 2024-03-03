@@ -20,8 +20,6 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
-//#include <bluetooth/scan.h> 
-
 #define LOG_LEVEL 3
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main);
@@ -152,9 +150,7 @@ static uint8_t discover_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
-#if 0  // noisy
 	LOG_INF("[ATTRIBUTE] handle %u", attr->handle);
-#endif
 
 	if (!bt_uuid_cmp(discover_params.uuid, BT_UUID_HTS)) {
 		memcpy(&uuid, BT_UUID_HTS_MEASUREMENT, sizeof(uuid));
@@ -243,11 +239,10 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 static bool eir_found(struct bt_data *data, void *user_data)
 {
 	bt_addr_le_t *addr = user_data;
+	struct bt_conn_le_create_param *conn_params;
 	int i;
 
-#if 1  // noisy
 	LOG_INF("[AdvData]: type %u, data_len %u", data->type, data->data_len);
-#endif
 
 	switch (data->type) {
 	case BT_DATA_UUID16_SOME:
@@ -262,7 +257,6 @@ static bool eir_found(struct bt_data *data, void *user_data)
 			uint16_t u16;
 			int err;
 
-			// NOTE: BT_UUID_HTS_VAL 0x1809
 			memcpy(&u16, &data->data[i], sizeof(u16));
 			uuid = BT_UUID_DECLARE_16(sys_le16_to_cpu(u16));
 			err = bt_uuid_cmp(uuid, BT_UUID_HTS);
@@ -280,7 +274,12 @@ static bool eir_found(struct bt_data *data, void *user_data)
 
 			LOG_INF("Create connection");
 
-			err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN,
+			conn_params = BT_CONN_LE_CREATE_PARAM(
+					BT_CONN_LE_OPT_CODED | BT_CONN_LE_OPT_NO_1M,
+					BT_GAP_SCAN_FAST_INTERVAL,
+					BT_GAP_SCAN_FAST_INTERVAL);
+
+			err = bt_conn_le_create(addr, conn_params,
 						BT_LE_CONN_PARAM_DEFAULT,
 						&default_conn);
 			if (err) {
@@ -304,10 +303,9 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 	char dev[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(addr, dev, sizeof(dev));
-#if 1 // noisy
+
 	LOG_INF("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i",
 	       dev, type, ad->len, rssi);
-#endif
 
 	/* We're only interested in connectable events */
 	if (type == BT_HCI_ADV_IND || 
@@ -318,7 +316,6 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 	}
 }
 
-#if 1
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
@@ -338,51 +335,15 @@ static int scan_start(void)
 	};
 
 	err = bt_le_scan_start(&scan_param, device_found);
-	if (err)
+	if (err) {
 		LOG_ERR("Scan start failed: %d", err);
+	}
+	else {
+		LOG_INF("Scan start successfully");
+	}
+
 	return err;
 }
-#else
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
-static void scan_init(void)
-{
-	int err;
-
-	/* 
-	 * Use active scanning and disable duplicate filtering to handle any
-	 * devices that might update their advertising data at runtime.
-	 */
-	struct bt_le_scan_param scan_param = {
-		.type     = BT_LE_SCAN_TYPE_ACTIVE,
-		.interval = BT_GAP_SCAN_FAST_INTERVAL,
-		.window   = BT_GAP_SCAN_FAST_WINDOW,
-		.options  = BT_LE_SCAN_OPT_CODED | BT_LE_SCAN_OPT_NO_1M
-	};
-
-	struct bt_scan_init_param scan_init = {
-		.connect_if_match = 0,
-		.scan_param = &scan_param,
-		.conn_param = NULL
-	};
-
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
-
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HRS);
-	if (err) {
-		LOG_ERR("Scanning filters cannot be set: %d", err);
-		return;
-	}
-
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
-	if (err) {
-		LOG_ERR("Filters cannot be enabled: %d", err);
-	}
-}
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -453,19 +414,11 @@ int main(void)
 	LOG_INF("Bluetooth initialized as Central scanning for \"%s\"",
 		    DEVICE_NAME);
 
-#if 1
 	err = scan_start();
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);
 		return err;
 	}
-#else
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		LOG_ERR("Scanning failed to start: %d", err);
-		return;
-	}	
-#endif
 
 	LOG_INF("Scanning successfully started");
 

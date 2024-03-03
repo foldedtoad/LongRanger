@@ -218,51 +218,6 @@ static void start_advertising_coded(struct k_work * work)
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
-#if 0
-static void bt_ready(void)
-{
-	int err;
-
-	LOG_INF("Bluetooth initialized");
-
-	hts_init();
-
-	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return;
-	}
-
-	LOG_INF("Advertising successfully started");
-}
-#endif
-
-#if 0
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
-static void auth_cancel(struct bt_conn *conn)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	LOG_WRN("Pairing cancelled: %s", addr);
-}
-
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
-
-static struct bt_conn_auth_cb auth_cb_display = {
-	.cancel = auth_cancel,
-};
-#endif
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
 static void bas_notify(void)
 {
 	uint8_t battery_level = bt_bas_get_battery_level();
@@ -289,19 +244,11 @@ int main(void)
 		return err;
 	}
 
-#if 0
-	bt_ready();
-#endif	
-
 	err = create_advertising_coded();
 	if (err) {
 		LOG_ERR("Advertising failed to create: %d", err);
 		return err;
 	}
-
-#if 0
-	bt_conn_auth_cb_register(&auth_cb_display);
-#endif
 
 	LOG_INF("Bluetooth initialized as Peripheral advertising as \"%s\"",
 		    DEVICE_NAME);
