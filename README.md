@@ -24,7 +24,7 @@ There are two easy methods to build the firmware.
 1) cd to your ./LongRanger/peripheral directory
 2) run "./configure.sh"
 3) cd to build directory
-4) make -j4## How to Build
+4) make -j4
 5) make flash
 
 ### 2) West Method
