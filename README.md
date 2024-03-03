@@ -116,7 +116,8 @@ Minicom or Putty are suggested.
 For those with a spare (third) nRF52840DK (PCA10056) board or a nRF52840-Dongle (PCA10059)  
 you can try Wireshark with Nordic's [add-on](https://infocenter.nordicsemi.com/topic/ug_sniffer_ble/UG/). (read there for details)  
 
-Wireshark will allow you to sniff the Coded-PHY traffic between the Central and Periphera apps.
+Wireshark will allow you to sniff the Coded-PHY traffic between the Central and Peripheral apps.
 
+![here](https://github.com/foldedtoad/LongRanger/blob/master/images/wireshark_01.png)
 
-   
+![here](https://github.com/foldedtoad/LongRanger/blob/master/images/wireshark_02.png)   
