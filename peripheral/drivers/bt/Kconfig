@@ -1,0 +1,4 @@
+#
+if BT
+rsource "zephyr_cyw43/Kconfig.rpi_pico_w"
+endif # BT

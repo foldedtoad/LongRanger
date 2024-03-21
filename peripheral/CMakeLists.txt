@@ -7,7 +7,9 @@ set_property(GLOBAL APPEND PROPERTY HEX_FILES_TO_MERGE
 
 set(DTS_ROOT_BINDINGS "${CMAKE_CURRENT_SOURCE_DIR}")
 
-set(BOARD nrf52840dk_nrf52840)
+#set(BOARD nrf52840dk_nrf52840)
+set(BOARD rpi_pico_w)
+#set(BOARD xiao_esp32c3)
 
 find_package(Zephyr)
 project(peripheral)
@@ -19,4 +21,6 @@ target_sources(app PRIVATE
   ${app_sources}
   )
 
-# zephyr_compile_options(-save-temps)
+add_subdirectory_ifdef(CONFIG_BT_ZEPHYR_CYW43  drivers)
+
+zephyr_compile_options(-save-temps)
