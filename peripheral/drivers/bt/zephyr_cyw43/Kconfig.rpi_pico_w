@@ -2,7 +2,7 @@
 
 menuconfig BT_ZEPHYR_CYW43
 	bool "Infineon CYW43 BT support"
-	default y
+	default n
 	#select NET_L2_BT_MGMT
 	#select BT_USE_NATIVE_NETWORKING
 
